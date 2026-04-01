@@ -82,21 +82,35 @@
     border-bottom: 1px solid var(--border);
   }
   .nav-logo {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--text-display);
-    letter-spacing: -0.01em;
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 3px;
   }
-  .nav-mark {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
+  .nav-flap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 28px;
+    background: var(--text-display);
+    color: var(--black);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 3px;
+    position: relative;
   }
+  .nav-flap::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(0,0,0,0.12);
+    transform: translateY(-0.5px);
+  }
+  .nav-space { width: 10px; }
   .nav-status {
     font-family: 'Space Mono', monospace;
     font-size: 11px;
@@ -113,7 +127,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: var(--space-3xl) var(--space-lg);
+    padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
   }
 
   .hero-label { margin-bottom: var(--space-xl); }
@@ -124,7 +138,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 6px;
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-2xl);
     max-width: 760px;
     perspective: 400px;
   }
@@ -465,8 +479,7 @@
 
   <nav>
     <div class="nav-logo">
-      <div class="nav-mark"></div>
-      Riel Labs
+      <div class="nav-flap">R</div><div class="nav-flap">I</div><div class="nav-flap">E</div><div class="nav-flap">L</div><div class="nav-space"></div><div class="nav-flap">L</div><div class="nav-flap">A</div><div class="nav-flap">B</div><div class="nav-flap">S</div>
     </div>
     <div class="nav-status">Coming Soon</div>
   </nav>
