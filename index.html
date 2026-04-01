@@ -11,7 +11,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;700&family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  /* ── Nothing Design Tokens (Dark Mode) ── */
   :root {
     --black: #000000;
     --surface: #111111;
@@ -23,11 +22,7 @@
     --text-primary: #E8E8E8;
     --text-display: #FFFFFF;
     --accent: #D71921;
-    --accent-subtle: rgba(215,25,33,0.15);
     --success: #4A9E5C;
-    --warning: #D4A843;
-    --interactive: #5B9BF6;
-
     --space-xs: 4px;
     --space-sm: 8px;
     --space-md: 16px;
@@ -49,7 +44,6 @@
     line-height: 1.5;
   }
 
-  /* ── Dot-matrix background ── */
   .dot-bg {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -57,11 +51,10 @@
     background-size: 16px 16px;
     opacity: 0.4;
     pointer-events: none;
-    mask-image: radial-gradient(ellipse at 50% 20%, black 10%, transparent 60%);
-    -webkit-mask-image: radial-gradient(ellipse at 50% 20%, black 10%, transparent 60%);
+    mask-image: radial-gradient(ellipse at 50% 30%, black 10%, transparent 55%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 10%, transparent 55%);
   }
 
-  /* ── Label style (reusable) ── */
   .label {
     font-family: 'Space Mono', monospace;
     font-size: 11px;
@@ -72,7 +65,6 @@
     line-height: 1.2;
   }
 
-  /* ── Layout ── */
   .wrapper {
     position: relative;
     z-index: 1;
@@ -118,41 +110,158 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: var(--space-4xl) var(--space-xl) var(--space-3xl);
-    max-width: 900px;
-  }
-  @media (max-width: 680px) {
-    .hero { padding: var(--space-3xl) var(--space-lg) var(--space-2xl); }
-  }
-
-  .hero-label {
-    margin-bottom: var(--space-lg);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-3xl) var(--space-lg);
   }
 
-  h1 {
-    font-family: 'Doto', 'Space Mono', monospace;
-    font-size: clamp(48px, 10vw, 96px);
-    font-weight: 700;
-    line-height: 1.0;
-    letter-spacing: -0.03em;
-    color: var(--text-display);
+  .hero-label { margin-bottom: var(--space-xl); }
+
+  /* ── Split-flap display ── */
+  .flap-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
     margin-bottom: var(--space-xl);
+    max-width: 760px;
+    perspective: 400px;
+  }
+  .flap-word {
+    display: flex;
+    gap: 3px;
+  }
+  .flap-space { width: 20px; }
+  .flap-char {
+    width: clamp(36px, 6vw, 56px);
+    height: clamp(48px, 8vw, 72px);
+    position: relative;
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  .flap-char .flap-static {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--text-display);
+    color: var(--black);
+    opacity: 0;
+  }
+  /* Top half */
+  .flap-char .flap-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    overflow: hidden;
+    background: var(--text-display);
+    border-radius: 4px 4px 0 0;
+    z-index: 3;
+    transform-origin: bottom center;
+    opacity: 0;
+  }
+  .flap-char .flap-top span {
+    position: absolute;
+    width: 100%;
+    height: 200%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--black);
+  }
+  /* Bottom half */
+  .flap-char .flap-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50%;
+    overflow: hidden;
+    background: var(--text-display);
+    border-radius: 0 0 4px 4px;
+    z-index: 2;
+    transform-origin: top center;
+    opacity: 0;
+  }
+  .flap-char .flap-bottom span {
+    position: absolute;
+    width: 100%;
+    height: 200%;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--black);
+  }
+  /* Divider line */
+  .flap-char::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(0,0,0,0.15);
+    z-index: 10;
+    opacity: 0;
+    transform: translateY(-0.5px);
+  }
+  /* Active state */
+  .flap-char.revealed .flap-static { opacity: 1; }
+  .flap-char.revealed .flap-top { opacity: 1; }
+  .flap-char.revealed .flap-bottom { opacity: 1; }
+  .flap-char.revealed::after { opacity: 1; }
+
+  /* Flip animation */
+  .flap-char.flipping .flap-top {
+    animation: flipTop 0.15s ease-in forwards;
+  }
+  .flap-char.flipping .flap-bottom {
+    animation: flipBottom 0.15s 0.1s ease-out forwards;
+  }
+  @keyframes flipTop {
+    0% { transform: rotateX(0deg); }
+    100% { transform: rotateX(-90deg); }
+  }
+  @keyframes flipBottom {
+    0% { transform: rotateX(90deg); }
+    100% { transform: rotateX(0deg); }
+  }
+
+  /* Pre-flip: show the scramble char */
+  .flap-char .flap-scramble {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-raised);
+    color: var(--text-disabled);
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    border-radius: 4px;
+    opacity: 0;
   }
 
   .hero-description {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 18px;
     font-weight: 300;
-    line-height: 1.6;
+    line-height: 1.7;
     color: var(--text-secondary);
     max-width: 480px;
     margin-bottom: var(--space-3xl);
   }
 
-  /* ── Workflow strip ── */
+  /* ── Workflow ── */
   .workflow {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 2px;
     margin-bottom: var(--space-3xl);
     flex-wrap: wrap;
@@ -164,6 +273,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
+    text-align: left;
   }
   .wf-block:first-child { border-radius: 8px 0 0 8px; }
   .wf-block:last-child { border-radius: 0 8px 8px 0; }
@@ -184,14 +294,14 @@
     flex-shrink: 0;
   }
   @media (max-width: 600px) {
-    .workflow { flex-direction: column; align-items: flex-start; }
+    .workflow { flex-direction: column; }
     .wf-block { width: 100%; border-radius: 0; }
     .wf-block:first-child { border-radius: 8px 8px 0 0; }
     .wf-block:last-child { border-radius: 0 0 8px 8px; }
     .wf-connector { transform: rotate(90deg); height: 20px; width: 100%; }
   }
 
-  /* ── Capabilities grid ── */
+  /* ── Capabilities ── */
   .cap-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -201,6 +311,9 @@
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: var(--space-3xl);
+    max-width: 720px;
+    width: 100%;
+    text-align: left;
   }
   @media (max-width: 600px) { .cap-grid { grid-template-columns: 1fr; } }
   .cap-cell {
@@ -214,7 +327,6 @@
     font-weight: 500;
     color: var(--text-display);
     margin-bottom: var(--space-sm);
-    letter-spacing: -0.01em;
   }
   .cap-cell p {
     font-size: 13px;
@@ -222,7 +334,7 @@
     line-height: 1.6;
   }
 
-  /* ── Terminal block ── */
+  /* ── Terminal ── */
   .terminal {
     background: var(--surface);
     border: 1px solid var(--border-visible);
@@ -230,9 +342,11 @@
     padding: var(--space-lg);
     margin-bottom: var(--space-3xl);
     max-width: 540px;
+    width: 100%;
     font-family: 'Space Mono', monospace;
     font-size: 13px;
     line-height: 2;
+    text-align: left;
   }
   .terminal-bar {
     display: flex;
@@ -261,7 +375,12 @@
     50% { opacity: 0; }
   }
 
-  /* ── Segmented progress bar ── */
+  /* ── Progress bar ── */
+  .progress-wrap {
+    max-width: 540px;
+    width: 100%;
+    margin-bottom: var(--space-3xl);
+  }
   .seg-bar {
     display: flex;
     gap: 2px;
@@ -278,14 +397,17 @@
   /* ── Email capture ── */
   .capture {
     max-width: 440px;
+    width: 100%;
   }
   .capture .label { margin-bottom: var(--space-md); }
   .capture-form {
     display: flex;
     gap: var(--space-sm);
+    justify-content: center;
   }
   .capture-form input {
     flex: 1;
+    max-width: 280px;
     background: transparent;
     border: none;
     border-bottom: 1px solid var(--border-visible);
@@ -295,13 +417,13 @@
     color: var(--text-primary);
     outline: none;
     transition: border-color 200ms ease-out;
+    text-align: center;
   }
   .capture-form input::placeholder { color: var(--text-disabled); }
   .capture-form input:focus { border-color: var(--text-primary); }
   .capture-form button {
     font-family: 'Space Mono', monospace;
     font-size: 13px;
-    font-weight: 400;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     background: var(--text-display);
@@ -315,8 +437,6 @@
     min-height: 44px;
   }
   .capture-form button:hover { opacity: 0.85; }
-
-  /* ── Status inline ── */
   .inline-status {
     font-family: 'Space Mono', monospace;
     font-size: 12px;
@@ -328,16 +448,13 @@
 
   /* ── Footer ── */
   footer {
-    padding: var(--space-xl) var(--space-xl);
+    padding: var(--space-xl);
     border-top: 1px solid var(--border);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
+    gap: var(--space-xl);
   }
   footer .label { color: var(--text-disabled); }
-  @media (max-width: 480px) {
-    footer { flex-direction: column; gap: var(--space-sm); text-align: center; }
-  }
 </style>
 </head>
 <body>
@@ -346,7 +463,6 @@
 
 <div class="wrapper">
 
-  <!-- ── Nav ── -->
   <nav>
     <div class="nav-logo">
       <div class="nav-mark"></div>
@@ -355,18 +471,17 @@
     <div class="nav-status">Coming Soon</div>
   </nav>
 
-  <!-- ── Hero ── -->
   <main class="hero">
 
     <div class="label hero-label">London · 2026</div>
 
-    <h1>Agents that do the work</h1>
+    <!-- Split-flap hero -->
+    <div class="flap-container" id="flapDisplay"></div>
 
     <p class="hero-description">
       We build AI agents that handle real-world workflows end-to-end. From understanding intent to executing every step — autonomously, with tools, with memory.
     </p>
 
-    <!-- Workflow -->
     <div class="workflow">
       <div class="wf-block">
         <span class="label">01 Input</span>
@@ -384,7 +499,6 @@
       </div>
     </div>
 
-    <!-- Terminal -->
     <div class="terminal">
       <div class="terminal-bar">
         <span class="label">Agent Deploy</span>
@@ -397,8 +511,7 @@
       <div><span class="t-prompt">$</span> <span class="t-cursor"></span></div>
     </div>
 
-    <!-- Build progress -->
-    <div style="max-width: 540px; margin-bottom: var(--space-3xl);">
+    <div class="progress-wrap">
       <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-sm);">
         <span class="label">Build Progress</span>
         <span style="font-family: 'Space Mono', monospace; font-size: 14px; color: var(--text-display);">62%</span>
@@ -415,7 +528,6 @@
       </div>
     </div>
 
-    <!-- Capabilities -->
     <div class="cap-grid">
       <div class="cap-cell">
         <div class="label">01</div>
@@ -434,19 +546,17 @@
       </div>
     </div>
 
-    <!-- Email capture -->
     <div class="capture">
-      <div class="label">Get Notified</div>
+      <div class="label" style="text-align: center;">Get Notified</div>
       <form class="capture-form" onsubmit="handleSubmit(event)">
         <input type="email" placeholder="you@email.com" required id="emailInput">
         <button type="submit" id="submitBtn">Notify Me</button>
       </form>
-      <div class="inline-status" id="statusMsg">[ADDED] We'll be in touch.</div>
+      <div class="inline-status" id="statusMsg" style="text-align: center;">[ADDED] We'll be in touch.</div>
     </div>
 
   </main>
 
-  <!-- ── Footer ── -->
   <footer>
     <span class="label">© 2026 Riel Labs</span>
     <span class="label">London</span>
@@ -455,6 +565,70 @@
 </div>
 
 <script>
+// ── Split-flap / Solari board animation ──
+const TEXT = "AGENTS THAT DO THE WORK";
+const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const container = document.getElementById('flapDisplay');
+
+// Build the DOM
+const words = TEXT.split(' ');
+const allChars = [];
+
+words.forEach((word, wi) => {
+  const wordEl = document.createElement('div');
+  wordEl.className = 'flap-word';
+
+  for (let i = 0; i < word.length; i++) {
+    const char = word[i];
+    const el = document.createElement('div');
+    el.className = 'flap-char';
+    el.innerHTML = `
+      <div class="flap-scramble"></div>
+      <div class="flap-static">${char}</div>
+      <div class="flap-top"><span>${char}</span></div>
+      <div class="flap-bottom"><span>${char}</span></div>
+    `;
+    wordEl.appendChild(el);
+    allChars.push({ el, char, scrambleEl: el.querySelector('.flap-scramble') });
+  }
+
+  container.appendChild(wordEl);
+
+  // Add space between words (not after last)
+  if (wi < words.length - 1) {
+    const space = document.createElement('div');
+    space.className = 'flap-space';
+    container.appendChild(space);
+  }
+});
+
+// Animate: scramble then reveal each character
+function animateFlap() {
+  allChars.forEach((item, index) => {
+    const baseDelay = index * 80;
+    const scrambleCount = 3 + Math.floor(Math.random() * 4);
+
+    // Show scrambling characters
+    for (let s = 0; s < scrambleCount; s++) {
+      setTimeout(() => {
+        const randChar = CHARS[Math.floor(Math.random() * CHARS.length)];
+        item.scrambleEl.textContent = randChar;
+        item.scrambleEl.style.opacity = '1';
+      }, baseDelay + s * 50);
+    }
+
+    // Reveal the real character with flip
+    setTimeout(() => {
+      item.scrambleEl.style.opacity = '0';
+      item.el.classList.add('flipping', 'revealed');
+    }, baseDelay + scrambleCount * 50);
+  });
+}
+
+// Start after a brief pause
+setTimeout(animateFlap, 600);
+
+// Email form
 function handleSubmit(e) {
   e.preventDefault();
   const btn = document.getElementById('submitBtn');
